@@ -1,8 +1,3 @@
-/* --------------------------------------------------------------------------------------------
- * Copyright (c) Microsoft Corporation. All rights reserved.
- * Licensed under the MIT License. See License.txt in the project root for license information.
- * ------------------------------------------------------------------------------------------ */
-
 import {
 	createConnection,
 	TextDocuments,
@@ -10,9 +5,10 @@ import {
 	Diagnostic,
 	ProposedFeatures,
 } from 'vscode-languageserver';
-import { FleschKincaidDiagnosticProvider } from './FleschKincaidDiagnosticProvider';
-import { DiagnosticProvider } from './DiagnosticProvider';
-import { AutomatedReadabilityDiagnosticProvider } from './AutomatedReadabilityDiagnosticProvider';
+
+import { FleschKincaidDiagnosticProvider } from './diagnostic_providers/FleschKincaidDiagnosticProvider';
+import { DiagnosticProvider } from './diagnostic_providers/DiagnosticProvider';
+import { AutomatedReadabilityDiagnosticProvider } from './diagnostic_providers/AutomatedReadabilityDiagnosticProvider';
 
 let connection = createConnection(ProposedFeatures.all);
 let documents: TextDocuments = new TextDocuments();
@@ -27,15 +23,15 @@ connection.onInitialize(() => {
 
 documents.onDidOpen(open => {
 	connection.console.log("open");
-	validateTextDocument(open.document);
+	runDiagnostics(open.document);
 });
 
 documents.onDidChangeContent(change => {
 	connection.console.log("changed");
-	validateTextDocument(change.document);
+	runDiagnostics(change.document);
 });
 
-async function validateTextDocument(textDocument: TextDocument): Promise<void> {
+async function runDiagnostics(textDocument: TextDocument): Promise<void> {
 	let diagnostics: Diagnostic[] = [];
 
 	let providers: DiagnosticProvider[] = [

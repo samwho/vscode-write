@@ -1,7 +1,7 @@
 {
 	"name": "vscode-write-server",
 	"description": "The writer's toolbox: language server",
-	"version": "1.0.0",
+	"version": "0.0.1",
 	"author": "Sam Rose",
 	"license": "MIT",
 	"engines": {

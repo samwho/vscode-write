@@ -1,12 +1,11 @@
-import { MarkdownScanner } from './MarkdownScanner';
+import { MarkdownScanner } from '../MarkdownScanner';
 import { DiagnosticSeverity, TextDocument, Diagnostic, Connection } from 'vscode-languageserver';
 import { DiagnosticProvider } from './DiagnosticProvider';
 
-var fleschKincaid = require('flesch-kincaid');
+var automatedReadability = require('automated-readability');
 var wink = require('wink-tokenizer')();
-var syllable = require('syllable');
 
-export class FleschKincaidDiagnosticProvider implements DiagnosticProvider {
+export class AutomatedReadabilityDiagnosticProvider implements DiagnosticProvider {
   connection: Connection;
   scanner: MarkdownScanner;
 
@@ -20,33 +19,33 @@ export class FleschKincaidDiagnosticProvider implements DiagnosticProvider {
 
     this.scanner.sentences(document, (sentence, range) => {
       var words = 0;
-      var syllables = 0;
+      var characters = 0;
       for (const token of wink.tokenize(sentence)) {
         if (token.tag !== "word") {
           continue;
         }
 
         words += 1;
-        syllables += syllable(token.value);
+        characters += token.value.length;
       }
 
-      var grade = fleschKincaid({
+      var grade = automatedReadability({
         sentence: 1,
         word: words,
-        syllable: syllables,
+        character: characters,
       });
 
       if (grade > 20) {
         diagnostics.push(
           Diagnostic.create(
             range,
-            "Very high Flesch-Kincaid grade level: " + grade,
+            "Very high Automated Readability grade level: " + grade,
             DiagnosticSeverity.Error));
       } else if (grade > 15) {
         diagnostics.push(
           Diagnostic.create(
             range,
-            "High Flesch-Kincaid grade level: " + grade,
+            "High Automated Readability grade level: " + grade,
             DiagnosticSeverity.Warning));
       }
     });
