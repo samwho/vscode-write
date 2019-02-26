@@ -1,4 +1,4 @@
-import { MarkdownScanner } from '../MarkdownScanner';
+import { MarkdownScanner } from '../markdown/MarkdownScanner';
 import { DiagnosticSeverity, TextDocument, Diagnostic, Connection } from 'vscode-languageserver';
 import { DiagnosticProvider } from './DiagnosticProvider';
 
@@ -10,8 +10,8 @@ export class AutomatedReadabilityDiagnosticProvider implements DiagnosticProvide
   scanner: MarkdownScanner;
 
   constructor(connection: Connection) {
-     this.connection = connection;
-     this.scanner = new MarkdownScanner(connection);
+    this.connection = connection;
+    this.scanner = new MarkdownScanner(connection);
   }
 
   provideDiagnostics(document: TextDocument): Diagnostic[] {
