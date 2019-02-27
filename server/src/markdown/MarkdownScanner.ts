@@ -11,8 +11,14 @@ var sbd = require('sbd');
 
 export class MarkdownScanner {
   connection: Connection;
-  constructor(connection: Connection) {
+  constructor(connection: Connection | undefined) {
     this.connection = connection;
+  }
+
+  log(message: string): void {
+    if (this.connection) {
+      this.connection.console.log(message);
+    }
   }
 
   paragraphs(document: TextDocument, cb: (node: any) => void) {
