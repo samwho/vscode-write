@@ -1,4 +1,4 @@
-import { MarkdownScanner } from '../markdown/MarkdownScanner';
+import { MarkdownScanner } from '../scanners/MarkdownScanner';
 import { DiagnosticSeverity, TextDocument, Diagnostic, Connection } from 'vscode-languageserver';
 import { DiagnosticProvider } from './DiagnosticProvider';
 

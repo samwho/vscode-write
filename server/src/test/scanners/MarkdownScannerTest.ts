@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { MarkdownScanner } from '../../markdown/MarkdownScanner';
+import { MarkdownScanner } from '../../scanners/MarkdownScanner';
 import { TextDocument, Range } from 'vscode-languageserver';
 
 describe('MarkdownScanner', () => {

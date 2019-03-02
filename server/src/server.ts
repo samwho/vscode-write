@@ -9,6 +9,7 @@ import {
 import { FleschKincaidDiagnosticProvider } from './diagnostic_providers/FleschKincaidDiagnosticProvider';
 import { DiagnosticProvider } from './diagnostic_providers/DiagnosticProvider';
 import { AutomatedReadabilityDiagnosticProvider } from './diagnostic_providers/AutomatedReadabilityDiagnosticProvider';
+import { SpellChecker } from './diagnostic_providers/SpellChecker';
 
 let connection = createConnection(ProposedFeatures.all);
 let documents: TextDocuments = new TextDocuments();
@@ -22,12 +23,10 @@ connection.onInitialize(() => {
 });
 
 documents.onDidOpen(open => {
-	connection.console.log("open");
 	runDiagnostics(open.document);
 });
 
 documents.onDidChangeContent(change => {
-	connection.console.log("changed");
 	runDiagnostics(change.document);
 });
 
@@ -36,7 +35,8 @@ async function runDiagnostics(textDocument: TextDocument): Promise<void> {
 
 	let providers: DiagnosticProvider[] = [
 		new FleschKincaidDiagnosticProvider(connection),
-		new AutomatedReadabilityDiagnosticProvider(connection)
+		new AutomatedReadabilityDiagnosticProvider(connection),
+		new SpellChecker(connection)
 	];
 
 	for (const provider of providers) {
