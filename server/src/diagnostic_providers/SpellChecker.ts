@@ -1,32 +1,27 @@
 import { DiagnosticSeverity, TextDocument, Diagnostic, Connection } from 'vscode-languageserver';
 import { DiagnosticProvider } from './DiagnosticProvider';
-import { WordScanner } from '../scanners/WordScanner';
+import { TextScanner } from '../scanners/TextScanner';
+import { Words } from '../data/Words';
 
 var wink = require('wink-tokenizer')();
-var words = require('an-array-of-english-words');
 var bs = require('binary-search');
 
 export class SpellChecker implements DiagnosticProvider {
 	connection: Connection;
-	scanner: WordScanner;
+	scanner: TextScanner;
+	words: Words;
 
   constructor(connection: Connection) {
 		 this.connection = connection;
-		 this.scanner = new WordScanner(connection);
+		 this.scanner = new TextScanner(connection);
+		 this.words = Words.default();
   }
 
   provideDiagnostics(document: TextDocument): Diagnostic[] {
 		var diagnostics: Diagnostic[] = [];
-		var comparator: (a: string, b: string) => number = (a, b) => {
-			if (a > b) return 1;
-			if (b < b) return -1;
-			return 0;
-		};
 
 		this.scanner.words(document.getText(), (word, range) => {
-			let result = bs(words, word.toLowerCase(), comparator);
-
-			if (result < 0) {
+			if (!this.words.contains(word)) {
 				diagnostics.push(
 					Diagnostic.create(
 						range,
@@ -36,5 +31,11 @@ export class SpellChecker implements DiagnosticProvider {
 		});
 
     return diagnostics;
-  }
+	}
+
+	log(message: string): void {
+		if (this.connection) {
+			this.connection.console.log(message);
+		}
+	}
 }
