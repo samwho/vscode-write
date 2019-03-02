@@ -29,7 +29,7 @@ documents.onDidChangeContent(change => {
 	runDiagnostics(change.document);
 });
 
-async function runDiagnostics(textDocument: TextDocument): Promise<void> {
+async function runDiagnostics(document: TextDocument): Promise<void> {
 	let diagnostics: Diagnostic[] = [];
 
 	let providers: DiagnosticProvider[] = [
@@ -37,13 +37,12 @@ async function runDiagnostics(textDocument: TextDocument): Promise<void> {
 		new SpellChecker(connection)
 	];
 
-	for (const provider of providers) {
-		for (const diagnostic of provider.provideDiagnostics(textDocument)) {
-			diagnostics.push(diagnostic);
-		}
-	}
-
-	connection.sendDiagnostics({ uri: textDocument.uri, diagnostics });
+	providers.forEach(provider => {
+		provider.provideDiagnostics(document)
+			.then(diagnostics => {
+				connection.sendDiagnostics({ uri: document.uri, diagnostics });
+			});
+	});
 }
 
 documents.listen(connection);

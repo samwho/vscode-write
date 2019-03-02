@@ -16,8 +16,13 @@ export class AutomatedReadability implements DiagnosticProvider {
     this.textScanner = new TextScanner(connection);
   }
 
-  provideDiagnostics(document: TextDocument): Diagnostic[] {
+  async provideDiagnostics(document: TextDocument): Promise<Diagnostic[]> {
     var diagnostics: Diagnostic[] = [];
+    let config = await this.config(document.uri);
+
+    if (config.threshold == 0) {
+      return diagnostics;
+    }
 
     this.scanner.sentences(document, (sentence, range) => {
       var words = 0;
@@ -34,7 +39,7 @@ export class AutomatedReadability implements DiagnosticProvider {
         character: characters,
       });
 
-      if (score > 14) {
+      if (score > config.threshold) {
         diagnostics.push(
           Diagnostic.create(
             range,
@@ -44,6 +49,29 @@ export class AutomatedReadability implements DiagnosticProvider {
     });
 
     return diagnostics;
+  }
+
+  log(message: string): void {
+    if (this.connection) {
+      this.connection.console.log(message);
+    }
+  }
+
+  async config(uri: string): Promise<any> {
+    let defaultConfig = {
+      threshold: 14
+    };
+
+    if (this.connection === undefined) {
+      return defaultConfig;
+    }
+
+    let config = await this.connection.workspace.getConfiguration({
+      scopeUri: uri,
+      section: 'write.readability'
+    });
+
+    return { ...defaultConfig, ...config };
   }
 
   // https://en.wikipedia.org/wiki/Automated_readability_index

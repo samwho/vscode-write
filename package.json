@@ -40,7 +40,7 @@
 			"type": "object",
 			"title": "vscode-write language server logging level",
 			"properties": {
-				"vscode-write.trace.server": {
+				"write.trace.server": {
 					"scope": "window",
 					"type": "string",
 					"enum": [
@@ -50,6 +50,12 @@
 					],
 					"default": "off",
 					"description": "Traces the communication between VS Code and the language server."
+				},
+				"write.readability.threshold": {
+					"scope": "window",
+					"type": "number",
+					"default": 14,
+					"description": "Score threshold for the automated readability index in vscode-write, set to 0 to turn it off and see https://en.wikipedia.org/wiki/Automated_readability_index for what it means"
 				}
 			}
 		}

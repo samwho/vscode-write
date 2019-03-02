@@ -17,7 +17,7 @@ export class SpellChecker implements DiagnosticProvider {
 		 this.words = Words.default();
   }
 
-  provideDiagnostics(document: TextDocument): Diagnostic[] {
+  async provideDiagnostics(document: TextDocument): Promise<Diagnostic[]> {
 		var diagnostics: Diagnostic[] = [];
 
 		this.scanner.words(document.getText(), (word, range) => {
