@@ -1,9 +1,13 @@
 import * as fs from "fs";
 import * as path from "path";
 
-export class Words {
+export class Words implements Iterable<string> {
 	static default(): Words {
-		return new Words(path.join(__dirname, "..", "..", "data", "words"));
+		return defaultWords;
+	}
+
+	static weasel(): Words {
+		return weaselWords;
 	}
 
 	words: Map<string, boolean>;
@@ -18,4 +22,11 @@ export class Words {
 	contains(word: string): boolean {
 		return this.words.has(word.toLowerCase());
 	}
+
+	[Symbol.iterator](): Iterator<string> {
+		return this.words.keys();
+	}
 }
+
+let defaultWords = new Words(path.join(__dirname, "..", "..", "data", "words"));
+let weaselWords = new Words(path.join(__dirname, "..", "..", "data", "weasel_words"));

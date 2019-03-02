@@ -6,9 +6,8 @@ import {
 	ProposedFeatures,
 } from 'vscode-languageserver';
 
-import { FleschKincaidDiagnosticProvider } from './diagnostic_providers/FleschKincaidDiagnosticProvider';
 import { DiagnosticProvider } from './diagnostic_providers/DiagnosticProvider';
-import { AutomatedReadabilityDiagnosticProvider } from './diagnostic_providers/AutomatedReadabilityDiagnosticProvider';
+import { AutomatedReadability } from './diagnostic_providers/AutomatedReadability';
 import { SpellChecker } from './diagnostic_providers/SpellChecker';
 
 let connection = createConnection(ProposedFeatures.all);
@@ -34,8 +33,7 @@ async function runDiagnostics(textDocument: TextDocument): Promise<void> {
 	let diagnostics: Diagnostic[] = [];
 
 	let providers: DiagnosticProvider[] = [
-		new FleschKincaidDiagnosticProvider(connection),
-		new AutomatedReadabilityDiagnosticProvider(connection),
+		new AutomatedReadability(connection),
 		new SpellChecker(connection)
 	];
 
