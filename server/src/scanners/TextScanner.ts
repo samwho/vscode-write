@@ -1,6 +1,7 @@
 import * as Tokenizr from "tokenizr";
 import { Connection, Range, Position } from 'vscode-languageserver';
 
+// This class is largely based on https://github.com/winkjs/wink-tokenizer.
 export class TextScanner {
 	connection: Connection;
 	lexer: Tokenizr;
