@@ -2,76 +2,68 @@ import { MarkdownScanner } from '../scanners/MarkdownScanner';
 import { DiagnosticSeverity, TextDocument, Diagnostic, Connection } from 'vscode-languageserver';
 import { DiagnosticProvider } from './DiagnosticProvider';
 import { TextScanner } from '../scanners/TextScanner';
+import * as automatedReadability from 'automated-readability';
+import { Config } from '../Config';
 
-var automatedReadability = require('automated-readability');
+interface Options {
+  threshold: number;
+}
+
+let defaultOptions: Options = {
+  threshold: 14,
+};
 
 export class AutomatedReadability implements DiagnosticProvider {
   connection: Connection;
   scanner: MarkdownScanner;
   textScanner: TextScanner;
-
-  constructor(connection: Connection) {
+  config: Config<Options>;
+  constructor(connection: Connection, options: Options = defaultOptions) {
     this.connection = connection;
     this.scanner = new MarkdownScanner(connection);
     this.textScanner = new TextScanner(connection);
+    this.config = new Config(connection, 'write.readability', options);
   }
 
   async provideDiagnostics(document: TextDocument): Promise<Diagnostic[]> {
-    var diagnostics: Diagnostic[] = [];
-    let config = await this.config(document.uri);
-
-    if (config.threshold == 0) {
-      return diagnostics;
-    }
-
-    this.scanner.sentences(document, (sentence, range) => {
-      var words = 0;
-      var characters = 0;
-
-      this.textScanner.words(sentence, (word, range) => {
-        words += 1;
-        characters += word.length;
-      });
-
-      let score = automatedReadability({
-        sentence: 1,
-        word: words,
-        character: characters,
-      });
-
-      if (score > config.threshold) {
-        diagnostics.push(
-          Diagnostic.create(
-            range,
-            "This sentence is difficult to read, according to the automated readability index. It has a score of " + score.toFixed(1) + ". This means the reader would need to be " + this.scoreToAge(score) + " to understand it.",
-            DiagnosticSeverity.Warning));
+    return this.config.for(document).then(config => {
+      var diagnostics: Diagnostic[] = [];
+      if (config.threshold == 0) {
+        return diagnostics;
       }
-    });
 
-    return diagnostics;
+      this.scanner.sentences(document, (sentence, range) => {
+        var words = 0;
+        var characters = 0;
+
+        this.textScanner.words(sentence, (word, range) => {
+          words += 1;
+          characters += word.length;
+        });
+
+        let score = automatedReadability({
+          sentence: 1,
+          word: words,
+          character: characters,
+        });
+
+        if (score > config.threshold) {
+          diagnostics.push(
+            Diagnostic.create(
+              range,
+              "This sentence is difficult to read, according to the automated readability index. It has a score of " + score.toFixed(1) + ". This means the reader would need to be " + this.scoreToAge(score) + " to understand it.",
+              DiagnosticSeverity.Warning));
+        }
+      });
+
+      return diagnostics;
+    });
   }
 
   log(message: string): void {
     if (this.connection) {
       this.connection.console.log(message);
     }
-  }
-
-  async config(uri: string): Promise<any> {
-    let defaultConfig = {
-      threshold: 14
-    };
-
-    if (this.connection === undefined) {
-      return defaultConfig;
-    }
-
-    let config = await this.connection.workspace.getConfiguration({
-      scopeUri: uri,
-      section: 'write.readability'
-    });
-
-    return { ...defaultConfig, ...config };
   }
 
   // https://en.wikipedia.org/wiki/Automated_readability_index

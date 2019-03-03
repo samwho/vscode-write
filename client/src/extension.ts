@@ -35,7 +35,7 @@ export function activate(context: ExtensionContext) {
 	};
 
 	client = new LanguageClient(
-		'vscode-write',
+		'write',
 		'VSCode Write',
 		serverOptions,
 		clientOptions

@@ -6,10 +6,6 @@ export class Words implements Iterable<string> {
 		return defaultWords;
 	}
 
-	static weasel(): Words {
-		return weaselWords;
-	}
-
 	words: Map<string, boolean>;
 	constructor(path: string) {
 		this.words = new Map();
@@ -29,4 +25,3 @@ export class Words implements Iterable<string> {
 }
 
 let defaultWords = new Words(path.join(__dirname, "..", "..", "data", "words"));
-let weaselWords = new Words(path.join(__dirname, "..", "..", "data", "weasel_words"));

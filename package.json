@@ -56,6 +56,60 @@
 					"type": "number",
 					"default": 14,
 					"description": "Score threshold for the automated readability index in vscode-write, set to 0 to turn it off and see https://en.wikipedia.org/wiki/Automated_readability_index for what it means"
+				},
+				"write.write-good.passive": {
+					"scope": "window",
+					"type": "boolean",
+					"default": true,
+					"description": "Whether or not to enable the write-good passive voice checks."
+				},
+				"write.write-good.illusion": {
+					"scope": "window",
+					"type": "boolean",
+					"default": true,
+					"description": "Whether or not to enable the write-good lexical illusion checks, cases where words are repeated."
+				},
+				"write.write-good.so": {
+					"scope": "window",
+					"type": "boolean",
+					"default": true,
+					"description": "Whether or not to enable the write-good 'so' check, checking for so at the beginning of sentences."
+				},
+				"write.write-good.thereIs": {
+					"scope": "window",
+					"type": "boolean",
+					"default": true,
+					"description": "Whether or not to enable the write-good 'there is' and 'there are' checks at the beginning of a sentence."
+				},
+				"write.write-good.weasel": {
+					"scope": "window",
+					"type": "boolean",
+					"default": true,
+					"description": "Whether or not to enable the write-good weasel word checks."
+				},
+				"write.write-good.adverb": {
+					"scope": "window",
+					"type": "boolean",
+					"default": true,
+					"description": "Whether or not to enable the write-good check for adverbs that weaken meaning."
+				},
+				"write.write-good.tooWordy": {
+					"scope": "window",
+					"type": "boolean",
+					"default": true,
+					"description": "Whether or not to enable the write-good checks for phrases that are unnecessarily wordy."
+				},
+				"write.write-good.cliches": {
+					"scope": "window",
+					"type": "boolean",
+					"default": true,
+					"description": "Whether or not to enable the write-good check for common cliches."
+				},
+				"write.write-good.eprime": {
+					"scope": "window",
+					"type": "boolean",
+					"default": false,
+					"description": "Whether or not to enable the write-good checks for 'to-be' words."
 				}
 			}
 		}
