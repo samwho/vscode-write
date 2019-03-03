@@ -33,6 +33,7 @@ interface Suggestion {
 	reason: string;
 }
 
+// https://github.com/btford/write-good
 export class WriteGood implements DiagnosticProvider {
 	connection: Connection;
 	config: Config<Options>;
